@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PlayHub — Free Online Games | Play Like Poki</title>
+<meta name="description" content="PlayHub: free online games in your browser. Snake, Tetris, 2048, Pong, Breakout, Flappy, Minesweeper, Memory and more. No downloads, no sign-up.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" onclick="goHome();return false;" href="#">
+      <div class="logo-badge">🎮</div>
+      <div><b>Play<span>Hub</span></b><small>Free online games</small></div>
+    </a>
+    <div class="search">
+      <span class="s-icon">🔍</span>
+      <input id="searchInput" type="text" placeholder="Search games… try 'snake' or 'puzzle'" autocomplete="off">
+      <kbd>9 games</kbd>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn hide-m" id="favFilterBtn" title="Show favorites">🤍 <span class="dot" id="favCount"></span></button>
+      <button class="icon-btn" id="themeBtn" title="Toggle dark mode">🌙</button>
+      <button class="icon-btn primary" onclick="playRandom()" title="Surprise me!">🎲 Play</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero" id="hero">
+    <div>
+      <h1>▶ Play free games.<br>No downloads. Just fun.</h1>
+      <p>9 hand-made browser games inspired by Poki — Snake, Tetris, 2048, Pong, Breakout, Flappy Wings, Minesweeper, Memory Match & Tic-Tac-Toe. Works on phone, tablet & PC. Your high scores are saved on this device 🏆</p>
+      <div class="hero-cta">
+        <button class="btn btn-white" onclick="playRandom()">🎲 Play random game</button>
+        <a class="btn btn-ghost" href="#all-games">Browse all games ↓</a>
+      </div>
+    </div>
+    <div class="hero-art" id="heroArt"><!-- filled by JS --></div>
+  </section>
+
+  <nav class="cats" id="cats"><!-- pills by JS --></nav>
+
+  <div id="recentSection" style="display:none">
+    <div class="section-head">
+      <div><h2>🕘 Recently played</h2><p>Jump back in where you left off</p></div>
+      <button class="pill" onclick="clearRecent()" style="font-size:12px">Clear</button>
+    </div>
+    <div class="grid" id="recentGrid"></div>
+  </div>
+
+  <div class="section-head" id="all-games">
+    <div><h2 id="gridTitle">🎮 All games</h2><p id="gridSub">Click any tile to play instantly</p></div>
+    <span class="count-badge" id="gameCount"></span>
+  </div>
+  <div class="grid" id="gameGrid"></div>
+
+  <div class="section-head">
+    <div><h2>✨ Why PlayHub?</h2><p>Built as a static site — perfect for GitHub Pages</p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+    <div class="card" style="cursor:default"><div class="card-body" style="padding:20px">
+      <div style="font-size:34px">⚡</div><h3>Instant play</h3>
+      <div class="meta">No installs, no accounts. Every game loads in under a second and runs 100% in your browser.</div>
+    </div></div>
+    <div class="card" style="cursor:default"><div class="card-body" style="padding:20px">
+      <div style="font-size:34px">📱</div><h3>Phone + PC ready</h3>
+      <div class="meta">Touch controls, mouse and keyboard. Play on your phone on the train or on desktop at home.</div>
+    </div></div>
+    <div class="card" style="cursor:default"><div class="card-body" style="padding:20px">
+      <div style="font-size:34px">🏆</div><h3>High scores saved</h3>
+      <div class="meta">Best scores, favorites and history are stored locally in your browser — private by design.</div>
+    </div></div>
+    <div class="card" style="cursor:default"><div class="card-body" style="padding:20px">
+      <div style="font-size:34px">🌍</div><h3>Free forever & open</h3>
+      <div class="meta">100% static HTML/CSS/JS. Host it free on GitHub Pages, Netlify or any web host.</div>
+    </div></div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <p>🎮 <b>PlayHub</b> — a Poki-style demo made with pure HTML, CSS & JavaScript. All 9 games are original mini-clones written for learning & fun. High scores never leave your device.</p>
+    <div class="foot-links">
+      <button class="pill" onclick="playRandom()">🎲 Random</button>
+      <button class="pill" onclick="toggleTheme()">🌙 Theme</button>
+      <button class="pill" onclick="showAbout()">ℹ️ About</button>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== Game player modal ===== -->
+<div class="overlay" id="overlay">
+  <div class="player">
+    <div class="player-top">
+      <div class="g-emoji" id="pEmoji">🎮</div>
+      <div><h2 id="pTitle">Game</h2><div class="sub" id="pSub">Category</div></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="pFav" title="Favorite">🤍</button>
+      <button class="icon-btn" onclick="restartGame()" title="Restart">↻</button>
+      <button class="icon-btn" onclick="closePlayer()" title="Close (Esc)">✕</button>
+    </div>
+    <div class="player-body">
+      <div class="stage-wrap"><div class="stage"><div id="stage" style="position:relative"></div></div></div>
+      <aside class="side">
+        <div class="stat-row">
+          <div class="stat"><b id="statScore">0</b><span>Score</span></div>
+          <div class="stat"><b id="statBest">0</b><span>🏆 Best</span></div>
+        </div>
+        <div class="howto" id="pHowto"></div>
+        <button class="btn btn-play" onclick="restartGame()">▶ Play again</button>
+        <div class="row2">
+          <button class="btn btn-soft" onclick="playRandom()">🎲 Random</button>
+          <button class="btn btn-soft" onclick="closePlayer()">✕ Close</button>
+        </div>
+        <div class="related"><h4>You may also like</h4><div class="rel-grid" id="relGrid"></div></div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Game engines (plain scripts = GitHub Pages safe, no build step) -->
+<script src="js/games/snake.js"></script>
+<script src="js/games/pong.js"></script>
+<script src="js/games/breakout.js"></script>
+<script src="js/games/flappy.js"></script>
+<script src="js/games/tetris.js"></script>
+<script src="js/games/g2048.js"></script>
+<script src="js/games/minesweeper.js"></script>
+<script src="js/games/memory.js"></script>
+<script src="js/games/tictactoe.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
